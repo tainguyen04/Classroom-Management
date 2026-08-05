@@ -141,6 +141,3 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
-
-# Firebase admin SDK service account key file
-classroom-management-app-317c7-firebase-adminsdk-fbsvc-87869147d9.json
