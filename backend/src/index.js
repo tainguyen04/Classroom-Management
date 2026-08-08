@@ -4,6 +4,7 @@ dotenv.config();
 import { initializeFirebase } from "./config/firebase.js";
 import userRoutes from "./modules/user/user.route.js";
 import authRoutes from "./modules/auth/auth.route.js";
+import lessonRoutes from "./modules/lesson/lesson.route.js";
 
 const app = express();
 
@@ -12,9 +13,9 @@ const db = initializeFirebase(
 );
 
 app.use(express.json());
-
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/lesson", lessonRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

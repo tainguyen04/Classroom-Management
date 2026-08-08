@@ -8,5 +8,6 @@ router.post("/addInstructor", userController.addInstructor);
 router.get("/students", userController.getStudent);
 router.get("/student/:phone", userController.getStudentByPhoneNumber);
 router.put("/editStudent/:phone", userController.editStudent);
+router.put("/editProfile", userController.editStudent);
 router.delete("/student/:phone", userController.deleteStudent);
 export default router;

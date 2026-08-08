@@ -1,24 +1,47 @@
 import { db } from "../../config/firebase.js";
+import { generateSetupToken } from "../../utils/verifyToken.js";
+import { sendSetupEmail } from "../../utils/sendSetupEmail.js";
 export async function addStudent(student) {
-  const studentRef = await db
+  const studentSnap = await db
     .collection("users")
     .doc(student.phoneNumber)
     .get();
-  if (studentRef.exists) {
+  if (studentSnap.exists) {
     throw new Error("Student already exists");
   }
-  await db
+  const emailSnap = await db
     .collection("users")
-    .doc(student.phoneNumber)
-    .set({ ...student, role: "student" }, { merge: true });
-  return { data: student, id: student.phoneNumber };
+    .where("email", "==", student.email)
+    .get();
+  if (!emailSnap.empty) {
+    throw new Error("Student with this email already exists");
+  }
+  const studentData = {
+    ...student,
+    role: "student",
+    accountSetup: false,
+  };
+  await db.collection("users").doc(student.phoneNumber).set(studentData);
+  const setupToken = generateSetupToken();
+  await db
+    .collection("accountSetupTokens")
+    .doc(setupToken)
+    .set({
+      phoneNumber: student.phoneNumber,
+      expiration: Date.now() + 24 * 60 * 60 * 1000,
+    });
+  await sendSetupEmail(student.email, setupToken);
+  return {
+    data: { studentData },
+    id: student.phoneNumber,
+  };
 }
 export async function addInstructor(instructor) {
-  const instructorRef = await db
+  const instructorSnap = await db
     .collection("users")
     .doc(instructor.phoneNumber)
     .get();
-  if (instructorRef.exists) {
+  if (instructorSnap.exists) {
     throw new Error("Instructor already exists");
   }
   await db
@@ -28,36 +51,40 @@ export async function addInstructor(instructor) {
   return { data: instructor, id: instructor.phoneNumber };
 }
 export async function getStudent() {
-  const studentsRef = await db
+  const studentSnap = await db
     .collection("users")
     .where("role", "==", "student")
     .get();
-  const students = studentsRef.docs.map((doc) => doc.data());
+  const students = studentSnap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
   return { message: "Get student successfully", data: students };
 }
 export async function getStudentByPhoneNumber(phoneNumber) {
-  const studentRef = await db.collection("users").doc(phoneNumber).get();
-  if (!studentRef.exists) {
+  const studentSnap = await db.collection("users").doc(phoneNumber).get();
+  if (!studentSnap.exists) {
     throw new Error("Student not found");
   }
-  return { message: "Get student successfully", data: studentRef.data() };
+  return { message: "Get student successfully", data: studentSnap.data() };
 }
 export async function editStudent(phoneNumber, updatedData) {
-  const studentRef = await db.collection("users").doc(phoneNumber).get();
-  if (!studentRef.exists) {
+  const studentSnap = await db.collection("users").doc(phoneNumber).get();
+  if (!studentSnap.exists) {
     throw new Error("Student not found");
   }
-  await studentRef.ref.update(updatedData);
+  const { role, ...updatedFields } = updatedData;
+  await studentSnap.ref.update(updatedFields);
   return {
     message: "Edit student successfully",
-    data: { ...studentRef.data(), ...updatedData },
+    data: { ...studentSnap.data(), ...updatedFields },
   };
 }
 export async function deleteStudent(phoneNumber) {
-  const studentRef = await db.collection("users").doc(phoneNumber).get();
-  if (!studentRef.exists) {
+  const studentSnap = await db.collection("users").doc(phoneNumber).get();
+  if (!studentSnap.exists) {
     throw new Error("Student not found");
   }
-  await studentRef.ref.delete();
+  await studentSnap.ref.delete();
   return { message: "Delete student successfully" };
 }
