@@ -171,7 +171,7 @@ frontend
 **Build Command:**
 
 ```bash
-npm install
+npm install && npm run build
 ```
 
 **Publish Directory:**
