@@ -13,7 +13,7 @@ export async function getChatHistory(sender, receiver) {
   return { data: messages };
 }
 
-export function setupChatSocket(io) {
+export async function setupChatSocket(io) {
   io.on("connection", (socket) => {
     console.log("User connected");
     socket.on("join_chat", ({ sender, receiver }) => {
