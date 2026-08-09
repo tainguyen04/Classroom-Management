@@ -15,6 +15,7 @@ export async function assignLessons(req, res) {
 export async function myLessons(req, res) {
   try {
     const { phone } = req.query;
+    console.log("phone", phone);
     const result = await lessonService.myLessons(phone);
     res.status(200).json(result);
   } catch (error) {
@@ -23,8 +24,8 @@ export async function myLessons(req, res) {
 }
 export async function markLessonDone(req, res) {
   try {
-    const { phone, lessonId } = req.body;
-    const result = await lessonService.markLessonDone(phone, lessonId);
+    const { phone, lessonid } = req.body;
+    const result = await lessonService.markLessonDone(phone, lessonid);
     res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
