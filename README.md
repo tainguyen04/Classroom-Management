@@ -12,6 +12,7 @@ Hệ thống quản lý lớp học trực tuyến dành cho Giảng viên (Inst
 - **UI Library:** Ant Design (`antd`), Ant Design Icons
 - **Routing:** React Router DOM
 - **HTTP Client:** Axios
+- - **Deployment:** Render (`https://classroom-management-fe.onrender.com`)
 
 ### **Backend**
 
