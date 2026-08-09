@@ -9,6 +9,11 @@ import { setupChatSocket } from "./socket/socket.service.js";
 import socketRoutes from "./socket/socket.route.js";
 
 const app = express();
+app.use(
+  cors({
+    origin: Process.env.FRONTEND_URL || "http://localhost:5173",
+  }),
+);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

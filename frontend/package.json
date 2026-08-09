@@ -13,8 +13,11 @@
     "@ant-design/icons": "^6.3.2",
     "antd": "^6.5.4",
     "axios": "^1.19.0",
+    "query-string": "^9.5.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

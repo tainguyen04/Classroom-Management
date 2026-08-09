@@ -7,6 +7,7 @@ const userApi = {
   getStudentByPhoneNumber: (phone) => axiosClient.get(`/user/student/${phone}`),
   editStudent: (phone, data) =>
     axiosClient.put(`/user/editStudent/${phone}`, data),
+  editProfile: (data) => axiosClient.put("/user/editProfile", data),
   deleteStudent: (phone) => axiosClient.delete(`/user/student/${phone}`),
 };
 

@@ -1,12 +1,20 @@
+const PHONE_NUMBER = "phoneNumber";
 const ROLE = "role";
 export const storage = {
+  setPhone: (phoneNumber) => {
+    localStorage.setItem(PHONE_NUMBER, phoneNumber);
+  },
+  getPhone: () => {
+    return localStorage.getItem(PHONE_NUMBER);
+  },
   setRole: (role) => {
-    sessionStorage.setItem(ROLE, role);
+    localStorage.setItem(ROLE, role);
   },
   getRole: () => {
-    return sessionStorage.getItem(ROLE);
+    return localStorage.getItem(ROLE);
   },
-  removeRole: () => {
-    sessionStorage.removeItem(ROLE);
+  clearAuth: () => {
+    localStorage.removeItem(ROLE);
+    localStorage.removeItem(PHONE_NUMBER);
   },
 };

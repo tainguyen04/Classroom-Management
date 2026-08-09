@@ -1,9 +1,8 @@
 import { Layout, Menu, Button } from "antd";
 import {
-  UserOutlined,
   BookOutlined,
+  UserOutlined,
   LogoutOutlined,
-  DashboardOutlined,
   MessageOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
@@ -11,7 +10,7 @@ import { useAuth } from "../hooks/useAuth";
 
 const { Header, Sider, Content } = Layout;
 
-export const InstructorLayout = () => {
+export const StudentLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
@@ -23,24 +22,19 @@ export const InstructorLayout = () => {
 
   const menuItems = [
     {
-      key: "/instructor/dashboard",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
-    },
-    {
-      key: "/instructor/students",
-      icon: <UserOutlined />,
-      label: "Quản lý Học viên",
-    },
-    {
-      key: "/instructor/lessons",
+      key: "/student/lessons",
       icon: <BookOutlined />,
-      label: "Quản lý Bài học",
+      label: "Bài học của tôi",
     },
     {
       key: "/chat",
       icon: <MessageOutlined />,
-      label: "Tin nhắn Chat",
+      label: "Trao đổi & Hỏi đáp",
+    },
+    {
+      key: "/student/profile",
+      icon: <UserOutlined />,
+      label: "Thông tin cá nhân",
     },
   ];
 
@@ -59,7 +53,7 @@ export const InstructorLayout = () => {
             borderRadius: 6,
           }}
         >
-          INSTRUCTOR
+          STUDENT
         </div>
         <Menu
           theme="dark"
