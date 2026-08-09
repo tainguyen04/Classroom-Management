@@ -48,12 +48,14 @@ classroom-management/
 │   └── package.json
 │
 └── frontend/
-    ├── src/
-    │   ├── api/           # Khai báo các API (Axios)
-    │   ├── hooks/         # Custom hooks (useAuth, ...)
-    │   ├── pages/         # Login, SetupAccount, Dashboard...
-    │   └── App.jsx
-    └── package.json
+    └── src/
+        ├── api/           # Khai báo các API service (Axios instance, authApi, lessonApi...)
+        ├── components/    # Các UI Component dùng chung (ProtectedRoute, Loading, Modal...)
+        ├── hooks/         # Custom Hooks (useAuth, useSocket...)
+        ├── layouts/       # Khung giao diện chính (MainLayout, InstructorLayout, StudentLayout...)
+        ├── pages/         # Các trang chính (Login, SetupAccount, Dashboard, Lessons...)
+        ├── utils/         # Hàm tiện ích trợ giúp (formatDate, storage, helpers...)
+        └── App.jsx        # Root Component & Định tuyến (Routing)
 ```
 
 ## ⚙️ Cài đặt & Chạy dự án
@@ -156,15 +158,47 @@ cd frontend
 npm run dev
 ```
 
-### 6. Deployment
+### 6. Deployment Frontend
 
-Backend được deploy trên **Render**:
+Frontend được deploy trên **Render** dưới dạng **Static Site**.
+
+**Root Directory:**
 
 ```text
-https://classroom-management-bg6r.onrender.com
+frontend
 ```
 
-Khi deploy Backend trên Render:
+**Build Command:**
+
+```bash
+npm install
+```
+
+**Publish Directory:**
+
+```text
+dist
+```
+
+Frontend không sử dụng Environment Variables.
+
+Backend API được cấu hình trực tiếp trong source code và sử dụng:
+
+```text
+https://classroom-management-fe.onrender.com
+```
+
+Nếu sử dụng React Router, cấu hình Rewrite Rule trên Render:
+
+```text
+Source: /*
+Destination: /index.html
+Action: Rewrite
+```
+
+### 7. Deployment Backend
+
+Backend được deploy trên **Render** dưới dạng **Web Service**.
 
 **Build Command:**
 
@@ -178,4 +212,10 @@ npm install
 npm start
 ```
 
-Các biến môi trường production được cấu hình trong **Render → Environment → Environment Variables** thay vì đưa file `.env` lên repository.
+Backend:
+
+```text
+https://classroom-management-bg6r.onrender.com
+```
+
+Các thông tin nhạy cảm như Firebase Secret Key, Email credentials và các secret khác được cấu hình trong **Render → Environment Variables**, không lưu trực tiếp trong source code.
