@@ -22,7 +22,7 @@ export async function setupChatSocket(io) {
       console.log(`User joined chat room: ${room}`);
     });
 
-    socket.on("send_message", ({ sender, receiver, message }) => {
+    socket.on("send_message", async ({ sender, receiver, message }) => {
       const room = getChatRoom(sender, receiver);
       const messageData = {
         sender,
@@ -30,7 +30,7 @@ export async function setupChatSocket(io) {
         message,
         createdAt: Date.now(),
       };
-      await db.collection("messages").add({room, ...messageData});
+      await db.collection("messages").add({ room, ...messageData });
       io.to(room).emit("receive_message", messageData);
 
       console.log(`Message sent in chat room: ${room}`);

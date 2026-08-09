@@ -60,12 +60,16 @@ export async function loginEmail(email) {
   if (userSnap.empty) {
     throw new Error("User not found");
   }
+  const userData = userSnap.docs[0].data();
   const accessCode = generateAccessCode();
   await db.collection("accessCodes").doc(email).set({
     accessCode,
   });
   await sendAccessCodeToEmail(email, accessCode);
-  return { message: "Access code generated successfully", accessCode };
+  return {
+    message: "Access code generated successfully",
+    accessCode,
+  };
 }
 export async function validateAccessCodeEmail(email, accessCode) {
   const accessCodeSnap = await db.collection("accessCodes").doc(email).get();
@@ -77,7 +81,15 @@ export async function validateAccessCodeEmail(email, accessCode) {
     throw new Error("Invalid access code");
   }
   await accessCodeSnap.ref.update({ accessCode: "" });
-  return { success: true };
+  const userSnap = await db
+    .collection("users")
+    .where("email", "==", email)
+    .get();
+  if (userSnap.empty) {
+    throw new Error("User not found");
+  }
+  const userData = userSnap.docs[0].data();
+  return { success: true, role: userData.role };
 }
 
 export async function setupAccount(setupToken, username, password) {
@@ -108,4 +120,19 @@ export async function setupAccount(setupToken, username, password) {
   await userSnap.ref.update({ username, passwordHash, accountSetup: true });
   await tokenSnap.ref.delete();
   return { message: "Account setup successfully" };
+}
+export async function loginWithPassword(username, password) {
+  const userSnap = await db
+    .collection("users")
+    .where("username", "==", username)
+    .get();
+  if (userSnap.empty) {
+    throw new Error("User not found");
+  }
+  const userData = userSnap.docs[0].data();
+  const passwordMatch = await bcrypt.compare(password, userData.passwordHash);
+  if (!passwordMatch) {
+    throw new Error("Invalid password");
+  }
+  return { message: "Login successful", role: userData.role };
 }

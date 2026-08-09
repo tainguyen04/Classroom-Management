@@ -12,7 +12,7 @@ export const Login = () => {
   const [form] = Form.useForm();
   const [activeTab, setActiveTab] = useState('sms');
   const [loadingSendCode, setLoadingSendCode] = useState(false);
-  const [role] = useState('student');
+  const [role, setRole] = useState('student');
 
   const handleSendCode = async () => {
     try {
@@ -39,17 +39,20 @@ export const Login = () => {
   const onFinish = async (values) => {
     try {
       if (activeTab === 'sms') {
-        await authApi.validateAccessCode({ 
+        const result = await authApi.validateAccessCode({ 
           phoneNumber: values.phoneNumber, 
           accessCode: String(values.accessCode) 
         });
+        setRole(result.role);
       } else if (activeTab === 'email') {
-        await authApi.validateAccessCodeEmail({ 
+        const result = await authApi.validateAccessCodeEmail({ 
           email: values.email, 
           accessCode: String(values.accessCode) 
         });
+        setRole(result.role);
       } else {
-        console.log('Login với Password:', values);
+        const result = await authApi.loginWithPassword(values.username, values.password);
+        setRole(result.role);
       }
 
       loginWithRole(role);
