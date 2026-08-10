@@ -7,9 +7,13 @@ export const ProtectedRoute = ({ allowedRole }) => {
   if (!phone) {
     return <Navigate to="/login" replace />;
   }
+  console.log("ProtectedRoute:");
+  console.log("phone:", phone);
+  console.log("role:", role);
+  console.log("allowedRole:", allowedRole);
   if (allowedRole && role !== allowedRole) {
     const defaultPath =
-      role === "instructor" ? "/instructor/students" : "/student/lessons";
+      role === "instructor" ? "/instructor/lessons" : "/student/lessons";
     return <Navigate to={defaultPath} replace />;
   }
 
