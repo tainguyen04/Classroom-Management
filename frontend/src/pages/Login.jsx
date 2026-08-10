@@ -62,27 +62,25 @@ export const Login = () => {
           phoneNumber: contactValue,
           accessCode: String(values.accessCode),
         });
-        userRole = result?.role || "student";
+        userRole = result?.data?.role || "student";
       } else if (activeTab === "email") {
         const result = await authApi.ValidateAccessCode({
           email: contactValue,
           accessCode: String(values.accessCode),
         });
-        userRole = result?.role || "student";
+        userRole = result?.data?.role || "student";
       } else {
         const result = await authApi.loginWithPassword(
           values.username,
           values.password,
         );
-        userRole = result?.role || "student";
+        userRole = result?.data?.role || "student";
       }
 
       loginWithRole(userRole);
       message.success("Đăng nhập thành công!");
       navigate(
-        userRole === "instructor"
-          ? "/instructor/dashboard"
-          : "/student/dashboard",
+        userRole === "instructor" ? "/instructor/lessons" : "/student/lessons",
       );
     } catch (err) {
       message.error(err.message || "Xác thực thất bại!");
