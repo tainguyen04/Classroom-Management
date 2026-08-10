@@ -70,7 +70,7 @@ export const InstructorStudents = () => {
   };
 
   const columns = [
-    { title: "Họ và Tên", dataIndex: "fullName", key: "fullName" },
+    { title: "Họ và Tên", dataIndex: "name", key: "name" },
     { title: "Số điện thoại", dataIndex: "phoneNumber", key: "phoneNumber" },
     { title: "Email", dataIndex: "email", key: "email" },
     {
@@ -139,11 +139,7 @@ export const InstructorStudents = () => {
         onOk={() => form.submit()}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmitForm}>
-          <Form.Item
-            name="fullName"
-            label="Họ và Tên"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="name" label="Họ và Tên" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
