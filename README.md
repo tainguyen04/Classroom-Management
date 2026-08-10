@@ -220,3 +220,13 @@ https://classroom-management-bg6r.onrender.com
 ```
 
 Các thông tin nhạy cảm như Firebase Secret Key, Email credentials và các secret khác được cấu hình trong **Render → Environment Variables**, không lưu trực tiếp trong source code.
+
+### 8. Giao diện ứng dụng
+
+1. Trang login
+   ![alt text](image.png)
+2. Trang xác thực
+   ![alt text](image-1.png)
+3. Trang quản lý học viên
+   ![alt text](image-2.png)
+4.

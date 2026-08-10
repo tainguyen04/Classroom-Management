@@ -5,6 +5,7 @@ const router = Router();
 
 router.post("/assignLesson", lessonController.assignLessons);
 router.get("/myLessons", lessonController.myLessons);
+router.get("/getAllLessons", lessonController.getAllLessons);
 router.post("/markLessonDone", lessonController.markLessonDone);
 
 export default router;

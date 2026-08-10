@@ -22,6 +22,14 @@ export async function myLessons(req, res) {
     res.status(400).json({ message: error.message });
   }
 }
+export async function getAllLessons(req, res) {
+  try {
+    const result = await lessonService.getAllLessons();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
 export async function markLessonDone(req, res) {
   try {
     const { phone, lessonid } = req.body;

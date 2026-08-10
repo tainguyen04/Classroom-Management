@@ -70,7 +70,11 @@ export const InstructorStudents = () => {
   };
 
   const columns = [
-    { title: "Họ và Tên", dataIndex: "name", key: "name" },
+    {
+      title: "Họ và Tên",
+      dataIndex: "name",
+      render: (_, record) => record.name || "Chưa cập nhật",
+    },
     { title: "Số điện thoại", dataIndex: "phoneNumber", key: "phoneNumber" },
     { title: "Email", dataIndex: "email", key: "email" },
     {

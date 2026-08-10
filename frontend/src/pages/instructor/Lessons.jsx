@@ -7,6 +7,8 @@ import {
   Form,
   Input,
   Select,
+  Table,
+  Tag,
   message,
 } from "antd";
 import { PlusOutlined, BookOutlined } from "@ant-design/icons";
@@ -17,31 +19,46 @@ const { Title } = Typography;
 
 export const InstructorLessons = () => {
   const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [lessons, setLessons] = useState([]);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [loadingLessons, setLoadingLessons] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+
   const fetchStudents = useCallback(async () => {
-    setLoading(true);
+    setLoadingStudents(true);
     try {
       const res = await userApi.getStudent();
-      console.log("res:", res);
-      console.log("students data:", res?.data);
-      console.log("is array:", Array.isArray(res?.data));
-      setStudents(res?.data || res || []);
+      const list = Array.isArray(res) ? res : res?.data || [];
+      setStudents(list);
     } catch (err) {
       message.error(err.message || "Không thể tải danh sách học viên!");
     } finally {
-      setLoading(false);
+      setLoadingStudents(false);
+    }
+  }, []);
+
+  const fetchLessons = useCallback(async () => {
+    setLoadingLessons(true);
+    try {
+      const res = await lessonApi.getAllLessons();
+      const list = Array.isArray(res) ? res : res?.data || [];
+      setLessons(list);
+    } catch (err) {
+      message.error(err.message || "Không thể tải danh sách bài học!");
+    } finally {
+      setLoadingLessons(false);
     }
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       await fetchStudents();
+      await fetchLessons();
     };
     fetchData();
-  }, [fetchStudents]);
+  }, [fetchStudents, fetchLessons]);
 
   const handleAssignLesson = async (values) => {
     setSubmitting(true);
@@ -55,12 +72,56 @@ export const InstructorLessons = () => {
       message.success("Đã giao bài học thành công!");
       setIsModalOpen(false);
       form.resetFields();
+      fetchLessons();
     } catch (err) {
       message.error(err.message || "Giao bài học thất bại!");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const columns = [
+    {
+      title: "Tiêu đề bài học",
+      dataIndex: "title",
+      key: "title",
+      render: (text) => <strong>{text}</strong>,
+    },
+    {
+      title: "Mô tả / Yêu cầu",
+      dataIndex: "description",
+      key: "description",
+      ellipsis: true,
+    },
+    {
+      title: "Học viên nhận bài",
+      dataIndex: "studentPhone",
+      key: "studentPhone",
+      render: (phones) => {
+        if (!phones) return <Tag>Chưa phân công</Tag>;
+        const phoneList = Array.isArray(phones) ? phones : [phones];
+        return (
+          <>
+            {phoneList.map((phone) => (
+              <Tag color="blue" key={phone} style={{ marginBottom: 4 }}>
+                {phone}
+              </Tag>
+            ))}
+          </>
+        );
+      },
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "completed",
+      key: "completed",
+      render: (completed) => (
+        <Tag color={completed ? "green" : "orange"}>
+          {completed ? "Đã hoàn thành" : "Chưa hoàn thành"}
+        </Tag>
+      ),
+    },
+  ];
 
   return (
     <Card>
@@ -73,7 +134,7 @@ export const InstructorLessons = () => {
         }}
       >
         <Title level={3} style={{ margin: 0 }}>
-          Giao Bài Học
+          Quản Lý & Giao Bài Học
         </Title>
         <Button
           type="primary"
@@ -83,6 +144,14 @@ export const InstructorLessons = () => {
           Giao bài học mới
         </Button>
       </div>
+
+      <Table
+        dataSource={lessons}
+        columns={columns}
+        rowKey={(record) => record.id || record._id || record.title}
+        loading={loadingLessons}
+        pagination={{ pageSize: 8 }}
+      />
 
       <Modal
         title="Giao bài học mới cho Học viên"
@@ -129,7 +198,7 @@ export const InstructorLessons = () => {
               mode="multiple"
               placeholder="Chọn một hoặc nhiều học viên"
               style={{ width: "100%" }}
-              loading={loading}
+              loading={loadingStudents}
               allowClear
             >
               {students.map((std) => (

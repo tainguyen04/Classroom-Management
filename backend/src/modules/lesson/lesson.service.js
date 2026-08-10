@@ -22,6 +22,14 @@ export async function myLessons(phone) {
   }));
   return { message: "Get lessons successfully", data: lessons };
 }
+export async function getAllLessons() {
+  const lessonsSnap = await db.collection("lessons").get();
+  const lessons = lessonsSnap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  return { message: "Get all lessons successfully", data: lessons };
+}
 export async function markLessonDone(phone, lessonId) {
   const lessonSnap = await db.collection("lessons").doc(lessonId).get();
   if (!lessonSnap.exists) {
