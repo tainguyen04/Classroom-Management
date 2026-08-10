@@ -9,7 +9,7 @@ import { StudentProfile } from "./pages/student/Profile";
 
 import { InstructorStudents } from "./pages/instructor/Students";
 import { InstructorLessons } from "./pages/instructor/Lessons";
-import { ChatBox } from "./components/ChatBox";
+import { ChatPage } from "./pages/ChatPage";
 function App() {
   return (
     <BrowserRouter>
@@ -21,7 +21,7 @@ function App() {
           <Route element={<StudentLayout />}>
             <Route path="/student/lessons" element={<StudentLessons />} />
             <Route path="/student/profile" element={<StudentProfile />} />
-            <Route path="/chat" element={<ChatBox />} />
+            <Route path="/student/chat" element={<ChatPage />} />
           </Route>
         </Route>
 
@@ -32,7 +32,7 @@ function App() {
               element={<InstructorStudents />}
             />
             <Route path="/instructor/lessons" element={<InstructorLessons />} />
-            <Route path="/chat" element={<ChatBox />} />
+            <Route path="/instructor/chat" element={<ChatPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />

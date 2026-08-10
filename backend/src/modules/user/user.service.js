@@ -61,6 +61,17 @@ export async function getStudent() {
   }));
   return { message: "Get student successfully", data: students };
 }
+export async function getInstructor() {
+  const instructorSnap = await db
+    .collection("users")
+    .where("role", "==", "instructor")
+    .get();
+  const instructors = instructorSnap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  return { message: "Get instructor successfully", data: instructors };
+}
 export async function getStudentByPhoneNumber(phoneNumber) {
   const studentSnap = await db.collection("users").doc(phoneNumber).get();
   if (!studentSnap.exists) {

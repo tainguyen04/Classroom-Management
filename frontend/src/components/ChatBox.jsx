@@ -78,7 +78,7 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
     const msgData = {
       sender: myPhone,
       receiver: receiverPhone,
-      content: inputValue.trim(),
+      message: inputValue.trim(),
       createdAt: new Date().toISOString(),
     };
 
@@ -146,7 +146,7 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
                       wordBreak: "break-word",
                     }}
                   >
-                    {msg.content}
+                    {msg.message}
                   </div>
                 </div>
               );

@@ -30,6 +30,14 @@ export async function getStudent(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
+export async function getInstructor(req, res) {
+  try {
+    const result = await userService.getInstructor();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 export async function getStudentByPhoneNumber(req, res) {
   try {
     const { phone } = req.params;

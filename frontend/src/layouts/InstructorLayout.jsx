@@ -3,7 +3,6 @@ import {
   UserOutlined,
   BookOutlined,
   LogoutOutlined,
-  DashboardOutlined,
   MessageOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
@@ -23,11 +22,6 @@ export const InstructorLayout = () => {
 
   const menuItems = [
     {
-      key: "/instructor/dashboard",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
-    },
-    {
       key: "/instructor/students",
       icon: <UserOutlined />,
       label: "Quản lý Học viên",
@@ -38,7 +32,7 @@ export const InstructorLayout = () => {
       label: "Quản lý Bài học",
     },
     {
-      key: "/chat",
+      key: "/instructor/chat",
       icon: <MessageOutlined />,
       label: "Tin nhắn Chat",
     },

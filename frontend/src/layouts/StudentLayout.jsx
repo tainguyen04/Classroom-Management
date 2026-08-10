@@ -27,7 +27,7 @@ export const StudentLayout = () => {
       label: "Bài học của tôi",
     },
     {
-      key: "/chat",
+      key: "/student/chat",
       icon: <MessageOutlined />,
       label: "Trao đổi & Hỏi đáp",
     },
