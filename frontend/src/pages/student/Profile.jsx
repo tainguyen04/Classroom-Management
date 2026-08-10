@@ -26,9 +26,21 @@ export const StudentProfile = () => {
   const myPhone = storage.getPhone();
 
   useEffect(() => {
-    form.setFieldsValue({
-      phone: myPhone,
-    });
+    const fetchProfile = async () => {
+      try {
+        const result = userApi.getProfile({ phone: myPhone });
+        form.setFieldsValue({
+          phone: myPhone,
+          name: result?.name || "",
+          email: result?.email || "",
+        });
+      } catch (err) {
+        console.error("Error setting form values:", err);
+      }
+    };
+    if (myPhone) {
+      fetchProfile();
+    }
   }, [form, myPhone]);
   const handleUpdateProfile = async (values) => {
     setLoading(true);

@@ -62,19 +62,19 @@ export const Login = () => {
           phoneNumber: contactValue,
           accessCode: String(values.accessCode),
         });
-        userRole = result?.data?.role || "student";
+        userRole = result?.role || "student";
       } else if (activeTab === "email") {
         const result = await authApi.ValidateAccessCode({
           email: contactValue,
           accessCode: String(values.accessCode),
         });
-        userRole = result?.data?.role || "student";
+        userRole = result?.role || "student";
       } else {
         const result = await authApi.loginWithPassword(
           values.username,
           values.password,
         );
-        userRole = result?.data?.role || "student";
+        userRole = result?.role || "student";
       }
       loginWithRole(userRole);
       message.success("Đăng nhập thành công!");
