@@ -13,4 +13,5 @@ export async function sendAccessCode(phoneNumber, accessCode) {
   } catch (err) {
     console.error("Error sending access code:", err);
   }
+  console.log(`Access code ${accessCode} sent to ${phoneNumber}`);
 }

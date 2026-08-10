@@ -47,6 +47,15 @@ export async function getStudentByPhoneNumber(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
+export async function getStudentByEmail(req, res) {
+  try {
+    const { email } = req.params;
+    const result = await userService.getStudentByEmail(email);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 export async function editStudent(req, res) {
   try {
     const { phone } = req.params;

@@ -46,16 +46,22 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
   }, [fetchChatHistory]);
 
   useEffect(() => {
-    if (!myPhone) return;
+    if (!myPhone || !receiverPhone) return;
 
     socketRef.current = io(SOCKET_URL, {
       query: { phone: myPhone },
     });
 
+    socketRef.current.emit("join_chat", {
+      sender: myPhone,
+      receiver: receiverPhone,
+    });
+
     socketRef.current.on("receive_message", (newMessage) => {
       if (
-        newMessage.sender === receiverPhone &&
-        newMessage.receiver === myPhone
+        (newMessage.sender === receiverPhone &&
+          newMessage.receiver === myPhone) ||
+        (newMessage.sender === myPhone && newMessage.receiver === receiverPhone)
       ) {
         setMessages((prev) => [...prev, newMessage]);
       }
@@ -73,17 +79,15 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (!inputValue.trim() || !receiverPhone) return;
+    if (!inputValue.trim() || !receiverPhone || !myPhone) return;
 
     const msgData = {
       sender: myPhone,
       receiver: receiverPhone,
       message: inputValue.trim(),
-      createdAt: new Date().toISOString(),
     };
 
     socketRef.current?.emit("send_message", msgData);
-    setMessages((prev) => [...prev, msgData]);
     setInputValue("");
   };
 
@@ -119,7 +123,7 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
               const isMe = msg.sender === myPhone;
               return (
                 <div
-                  key={msg._id || index}
+                  key={msg._id || msg.id || index}
                   style={{
                     textAlign: isMe ? "right" : "left",
                     marginBottom: 12,

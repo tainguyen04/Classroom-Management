@@ -25,7 +25,7 @@ export const InstructorLessons = () => {
   const [submitting, setSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-
+  const [updatingId, setUpdatingId] = useState(null);
   const fetchStudents = useCallback(async () => {
     setLoadingStudents(true);
     try {
@@ -79,6 +79,35 @@ export const InstructorLessons = () => {
       setSubmitting(false);
     }
   };
+  const handleMarkLessonDone = async (record) => {
+    const lessonId = record.id || record._id;
+    const phone =
+      record.studentPhone ||
+      (Array.isArray(record.studentPhones)
+        ? record.studentPhones[0]
+        : record.studentPhones);
+
+    if (!lessonId || !phone) {
+      message.error("Thiếu thông tin bài học hoặc số điện thoại!");
+      return;
+    }
+
+    setUpdatingId(lessonId);
+
+    try {
+      await lessonApi.markLessonDone({
+        phone: phone,
+        lessonid: lessonId,
+      });
+
+      message.success("Cập nhật trạng thái thành công!");
+      fetchLessons();
+    } catch (err) {
+      message.error(err.message || "Cập nhật trạng thái thất bại!");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const columns = [
     {
@@ -119,6 +148,21 @@ export const InstructorLessons = () => {
         <Tag color={completed ? "green" : "orange"}>
           {completed ? "Đã hoàn thành" : "Chưa hoàn thành"}
         </Tag>
+      ),
+    },
+    {
+      title: "Thao tác",
+      key: "action",
+      render: (_, record) => (
+        <Button
+          type={record.completed ? "default" : "primary"}
+          size="small"
+          disabled={record.completed}
+          loading={updatingId === (record.id || record._id)}
+          onClick={() => handleMarkLessonDone(record)}
+        >
+          {record.completed ? "Đã hoàn thành" : "Hoàn thành"}
+        </Button>
       ),
     },
   ];

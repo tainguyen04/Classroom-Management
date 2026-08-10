@@ -79,6 +79,19 @@ export async function getStudentByPhoneNumber(phoneNumber) {
   }
   return { message: "Get student successfully", data: studentSnap.data() };
 }
+export async function getStudentByEmail(email) {
+  const studentSnap = await db
+    .collection("users")
+    .where("email", "==", email)
+    .get();
+  if (studentSnap.empty) {
+    throw new Error("Student not found");
+  }
+  return {
+    message: "Get student successfully",
+    data: studentSnap.docs[0].data(),
+  };
+}
 export async function editStudent(phoneNumber, updatedData) {
   const studentSnap = await db.collection("users").doc(phoneNumber).get();
   if (!studentSnap.exists) {

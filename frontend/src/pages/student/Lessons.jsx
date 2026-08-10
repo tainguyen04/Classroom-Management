@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Card, List, Button, Tag, Typography, message } from "antd";
-import { CheckCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { Card, List, Tag, Typography, message } from "antd";
+import { ClockCircleOutlined } from "@ant-design/icons";
 import lessonApi from "../../api/lessonApi";
 import { storage } from "../../utils/storage";
 
@@ -9,20 +9,38 @@ const { Title, Paragraph } = Typography;
 export const StudentLessons = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [updatingId, setUpdatingId] = useState(null);
-  const myPhone = storage.getPhone();
+  const [phoneNumber, setPhoneNumber] = useState(null);
+
+  const myEmail = storage.getEmail();
+
   const fetchMyLessons = useCallback(async () => {
     setLoading(true);
+
     try {
-      const res = await lessonApi.myLessons({ phone: myPhone });
+      const user = await lessonApi.getStudentByEmail(myEmail);
+
+      const phone = user?.phone || null;
+
+      setPhoneNumber(phone);
+
+      if (!phone) {
+        setLessons([]);
+        return;
+      }
+      const res = await lessonApi.myLessons({
+        phone,
+      });
+
       const data = res?.data || res || [];
+
       setLessons(Array.isArray(data) ? data : []);
     } catch (err) {
+      console.error("fetchMyLessons error:", err);
       message.error(err.message || "Không thể tải danh sách bài học!");
     } finally {
       setLoading(false);
     }
-  }, [myPhone]);
+  }, [myEmail]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,23 +48,6 @@ export const StudentLessons = () => {
     };
     fetchData();
   }, [fetchMyLessons]);
-
-  const handleMarkDone = async (lessonId) => {
-    setUpdatingId(lessonId);
-    try {
-      await lessonApi.markLessonDone({
-        phone: myPhone,
-        lessonid: lessonId,
-      });
-
-      message.success("Đã hoàn thành bài học!");
-      fetchMyLessons();
-    } catch (err) {
-      message.error(err.message || "Không thể cập nhật trạng thái bài học!");
-    } finally {
-      setUpdatingId(null);
-    }
-  };
 
   return (
     <Card
@@ -60,50 +61,44 @@ export const StudentLessons = () => {
         loading={loading}
         itemLayout="vertical"
         dataSource={lessons}
+        locale={{
+          emptyText: phoneNumber
+            ? "Bạn chưa có bài học nào."
+            : "Tài khoản chưa có số điện thoại.",
+        }}
         renderItem={(item) => {
           const lessonId = item.id || item._id;
-          const isDone = item.status === "DONE" || item.isDone;
+          const completed = item.status === "True" || item.isDone;
 
           return (
-            <List.Item
-              key={lessonId}
-              actions={[
-                isDone ? (
-                  <Tag
-                    icon={<CheckCircleOutlined />}
-                    color="success"
-                    style={{ padding: "6px 12px", fontSize: "14px" }}
-                  >
-                    Đã hoàn thành
-                  </Tag>
-                ) : (
-                  <Button
-                    type="primary"
-                    icon={<CheckCircleOutlined />}
-                    loading={updatingId === lessonId}
-                    onClick={() => handleMarkDone(lessonId)}
-                  >
-                    Đánh dấu Hoàn thành (Done)
-                  </Button>
-                ),
-              ]}
-            >
+            <List.Item key={lessonId}>
               <List.Item.Meta
                 title={
-                  <span style={{ fontSize: "18px", fontWeight: 600 }}>
+                  <span
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 600,
+                    }}
+                  >
                     {item.title}
                   </span>
                 }
                 description={
                   <Tag
                     icon={<ClockCircleOutlined />}
-                    color={isDone ? "default" : "processing"}
+                    color={completed ? "default" : "processing"}
                   >
-                    {isDone ? "Hoàn thành" : "Đang thực hiện"}
+                    {completed ? "Hoàn thành" : "Đang thực hiện"}
                   </Tag>
                 }
               />
-              <Paragraph style={{ color: "#595959", marginTop: 8 }}>
+
+              <Paragraph
+                style={{
+                  color: "#595959",
+                  marginTop: 8,
+                }}
+              >
                 {item.description}
               </Paragraph>
             </List.Item>
