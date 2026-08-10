@@ -25,6 +25,9 @@ export const InstructorLessons = () => {
     setLoading(true);
     try {
       const res = await userApi.getStudent();
+      console.log("res:", res);
+      console.log("students data:", res?.data);
+      console.log("is array:", Array.isArray(res?.data));
       setStudents(res?.data || res || []);
     } catch (err) {
       message.error(err.message || "Không thể tải danh sách học viên!");
