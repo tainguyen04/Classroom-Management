@@ -4,6 +4,7 @@ import { SendOutlined } from "@ant-design/icons";
 import { io } from "socket.io-client";
 import { storage } from "../utils/storage";
 import socketApi from "../api/socketApi";
+import studentApi from "../api/studentApi";
 
 const SOCKET_URL = "https://classroom-management-bg6r.onrender.com";
 
@@ -11,14 +12,47 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [myPhone, setMyPhone] = useState("");
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-  const myPhone = storage.getPhone();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const initMyPhone = async () => {
+      let phone = storage.getPhone();
+
+      if (!phone) {
+        try {
+          const userObj = JSON.parse(
+            localStorage.getItem("user") ||
+              localStorage.getItem("userInfo") ||
+              "{}",
+          );
+          const email = userObj.email || localStorage.getItem("email");
+
+          if (email && studentApi?.getStudentByEmail) {
+            const res = await studentApi.getStudentByEmail(email);
+            const studentData = res?.data || res;
+            phone = studentData?.phone || studentData?.phoneNumber;
+          }
+        } catch (err) {
+          console.error("Không thể lấy phone từ email:", err);
+        }
+      }
+
+      if (phone) {
+        setMyPhone(phone);
+      } else {
+        antMessage.error("Không tìm thấy số điện thoại của bạn!");
+      }
+    };
+
+    initMyPhone();
+  }, []);
 
   const fetchChatHistory = useCallback(async () => {
     if (!myPhone || !receiverPhone) return;
@@ -50,11 +84,14 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
 
     socketRef.current = io(SOCKET_URL, {
       query: { phone: myPhone },
+      transports: ["websocket", "polling"],
     });
 
-    socketRef.current.emit("join_chat", {
-      sender: myPhone,
-      receiver: receiverPhone,
+    socketRef.current.on("connect", () => {
+      socketRef.current.emit("join_chat", {
+        sender: myPhone,
+        receiver: receiverPhone,
+      });
     });
 
     socketRef.current.on("receive_message", (newMessage) => {
@@ -79,15 +116,33 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (!inputValue.trim() || !receiverPhone || !myPhone) return;
+    if (!inputValue.trim()) return;
+
+    if (!myPhone) {
+      antMessage.error(
+        "Chưa xác định được SĐT của bạn, không thể gửi tin nhắn!",
+      );
+      return;
+    }
+
+    if (!receiverPhone) {
+      antMessage.error("Chưa có thông tin người nhận!");
+      return;
+    }
+
+    if (!socketRef.current || !socketRef.current.connected) {
+      antMessage.error("Chưa kết nối tới server chat, vui lòng thử lại!");
+      return;
+    }
 
     const msgData = {
       sender: myPhone,
       receiver: receiverPhone,
       message: inputValue.trim(),
+      createdAt: new Date().toISOString(),
     };
 
-    socketRef.current?.emit("send_message", msgData);
+    socketRef.current.emit("send_message", msgData);
     setInputValue("");
   };
 
@@ -166,13 +221,13 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
           onChange={(e) => setInputValue(e.target.value)}
           onPressEnter={handleSendMessage}
           placeholder="Nhập tin nhắn..."
-          disabled={loading}
+          disabled={loading || !myPhone}
         />
         <Button
           type="primary"
           icon={<SendOutlined />}
           onClick={handleSendMessage}
-          disabled={loading}
+          disabled={loading || !myPhone}
         >
           Gửi
         </Button>

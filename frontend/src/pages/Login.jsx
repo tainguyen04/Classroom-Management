@@ -11,6 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import authApi from "../api/authApi";
 import { useAuth } from "../hooks/useAuth";
+import { storage } from "../utils/storage";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -56,6 +57,7 @@ export const Login = () => {
     try {
       setLoading(true);
       let userRole = "student";
+      let email = "";
 
       if (activeTab === "sms") {
         const result = await authApi.validateAccessCode({
@@ -69,6 +71,8 @@ export const Login = () => {
           accessCode: String(values.accessCode),
         });
         userRole = result?.role || "student";
+        email = result?.email || contactValue;
+        storage.setEmail(email);
       } else {
         const result = await authApi.loginWithPassword(
           values.username,

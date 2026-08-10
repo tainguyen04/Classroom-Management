@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Card, List, Tag, Typography, message } from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import lessonApi from "../../api/lessonApi";
+import userApi from "../../api/userApi";
 import { storage } from "../../utils/storage";
 
 const { Title, Paragraph } = Typography;
@@ -17,7 +18,7 @@ export const StudentLessons = () => {
     setLoading(true);
 
     try {
-      const user = await lessonApi.getStudentByEmail(myEmail);
+      const user = await userApi.getStudentByEmail(myEmail);
 
       const phone = user?.phone || null;
 
