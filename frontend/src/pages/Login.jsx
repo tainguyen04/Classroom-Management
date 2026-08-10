@@ -76,8 +76,10 @@ export const Login = () => {
         );
         userRole = result?.data?.role || "student";
       }
-
+      console.log("USER ROLE:", userRole);
+      console.log("STORAGE ROLE BEFORE NAV:", localStorage.getItem("role"));
       loginWithRole(userRole);
+      console.log("STORAGE ROLE AFTER LOGIN:", localStorage.getItem("role"));
       message.success("Đăng nhập thành công!");
       navigate(
         userRole === "instructor" ? "/instructor/lessons" : "/student/lessons",
