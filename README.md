@@ -231,3 +231,9 @@ Các thông tin nhạy cảm như Firebase Secret Key, Email credentials và cá
    ![alt text](image-2.png)
 4. Trang quản lý học viên
    ![alt text](image-3.png)
+5. Trang bài học của tôi
+   ![alt text](image-4.png)
+6. Trang ChatBox
+   ![alt text](image-5.png)
+7. Trang Profile
+   ![alt text](image-6.png)

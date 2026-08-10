@@ -34,8 +34,8 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
           );
           const email = userObj.email || localStorage.getItem("email");
 
-          if (email && userApi?.getUserByEmail) {
-            const res = await userApi.getUserByEmail(email);
+          if (email && userApi?.getStudentByEmail) {
+            const res = await userApi.getStudentByEmail(email);
             const userData = res?.data || res;
             phone = userData?.phone || userData?.phoneNumber;
           }
@@ -80,6 +80,9 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
   }, [fetchChatHistory]);
 
   useEffect(() => {
+    console.log("Creating socket...");
+    console.log("myPhone:", myPhone);
+    console.log("receiverPhone:", receiverPhone);
     if (!myPhone || !receiverPhone) return;
 
     socketRef.current = io(SOCKET_URL, {

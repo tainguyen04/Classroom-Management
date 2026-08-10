@@ -18,9 +18,11 @@ export const StudentLessons = () => {
     setLoading(true);
 
     try {
-      const user = await userApi.getStudentByEmail(myEmail);
+      const response = await userApi.getStudentByEmail(myEmail);
 
-      const phone = user?.phone || null;
+      const student = response?.data?.data || response?.data || response;
+
+      const phone = student?.phone || student?.phoneNumber || null;
 
       setPhoneNumber(phone);
 
@@ -69,7 +71,7 @@ export const StudentLessons = () => {
         }}
         renderItem={(item) => {
           const lessonId = item.id || item._id;
-          const completed = item.status === "True" || item.isDone;
+          const completed = item.completed === "True";
 
           return (
             <List.Item key={lessonId}>
@@ -87,9 +89,9 @@ export const StudentLessons = () => {
                 description={
                   <Tag
                     icon={<ClockCircleOutlined />}
-                    color={completed ? "default" : "processing"}
+                    color={completed ? "default" : "warning"}
                   >
-                    {completed ? "Hoàn thành" : "Đang thực hiện"}
+                    {completed ? "Hoàn thành" : "Chưa hoàn thành"}
                   </Tag>
                 }
               />
