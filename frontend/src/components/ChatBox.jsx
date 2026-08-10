@@ -4,7 +4,7 @@ import { SendOutlined } from "@ant-design/icons";
 import { io } from "socket.io-client";
 import { storage } from "../utils/storage";
 import socketApi from "../api/socketApi";
-import studentApi from "../api/studentApi";
+import userApi from "../api/userApi";
 
 const SOCKET_URL = "https://classroom-management-bg6r.onrender.com";
 
@@ -34,10 +34,10 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
           );
           const email = userObj.email || localStorage.getItem("email");
 
-          if (email && studentApi?.getStudentByEmail) {
-            const res = await studentApi.getStudentByEmail(email);
-            const studentData = res?.data || res;
-            phone = studentData?.phone || studentData?.phoneNumber;
+          if (email && userApi?.getUserByEmail) {
+            const res = await userApi.getUserByEmail(email);
+            const userData = res?.data || res;
+            phone = userData?.phone || userData?.phoneNumber;
           }
         } catch (err) {
           console.error("Không thể lấy phone từ email:", err);
