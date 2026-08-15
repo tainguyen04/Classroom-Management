@@ -6,7 +6,9 @@ import { storage } from "../utils/storage";
 import socketApi from "../api/socketApi";
 import userApi from "../api/userApi";
 
-const SOCKET_URL = "https://classroom-management-bg6r.onrender.com";
+const SOCKET_URL =
+  import.meta.env.VITE_SOCKET_URL ||
+  "https://classroom-management-bg6r.onrender.com";
 
 export const ChatBox = ({ receiverPhone, receiverName }) => {
   const [messages, setMessages] = useState([]);
@@ -80,9 +82,6 @@ export const ChatBox = ({ receiverPhone, receiverName }) => {
   }, [fetchChatHistory]);
 
   useEffect(() => {
-    console.log("Creating socket...");
-    console.log("myPhone:", myPhone);
-    console.log("receiverPhone:", receiverPhone);
     if (!myPhone || !receiverPhone) return;
 
     socketRef.current = io(SOCKET_URL, {
